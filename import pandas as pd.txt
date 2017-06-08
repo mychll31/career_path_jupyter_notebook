@@ -1,0 +1,45 @@
+import pandas as pd
+import numpy as np 
+import string
+
+def isEnglish(s):
+   try:
+       s.encode('ascii')
+       return 1
+   except:
+       return 0
+
+data = pd.read_csv("json_to_csv/out.csv")
+data.columns
+print(data.shape)
+
+data = data[(data['educations-field_of_study'] != "--undefined--") & (data['industry'] != "--undefined--")]
+
+columns = ["industry", "educations-degree", "educations-field_of_study", "educations-school-name", "positions-is-current", "num-connections"]
+new_data = data[columns]
+new_data['positions-is-current'] = new_data['positions-is-current'].replace('--undefined--', 'FALSE')
+new_data = new_data.replace("--undefined--",np.NaN)
+new_data = new_data.reset_index()
+
+#print(new_data.shape[0])
+is_english = []
+for i in range(0, new_data.shape[0]):
+   is_english.append(isEnglish(new_data["industry"][i]))
+new_data["is_english"] = is_english
+
+new_data[(new_data["is_english"] == 0) & (pd.isnull(new_data["industry"])==False)]
+new_data
+
+for i in columns:
+    new_data[i] = [str(j).upper() for j in new_data[i].tolist()]
+    
+new_data
+
+
+
+for i in new_data['industry']:
+	for j in specialization:
+		for k in j["word_contains"]:
+            if(i.str.contains(k)):
+                new_data['industry'] = k["id"]
+
